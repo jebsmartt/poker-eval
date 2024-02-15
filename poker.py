@@ -1,7 +1,4 @@
-test_hands = [
-          "4D 8S 10S JD 3C",
-          "AD 5S 4S 3D 2C",
-        ]
+test_hands = ["2S 5H 6S 8D 7H", "3S 4D 6D 8C 7S"]
 
 def best_hands(hands):
 
@@ -183,22 +180,28 @@ def best_hands(hands):
                         kicker_dict[kicker_index].append(score["kickers"][kicker_index])
                     kicker_index += 1
                 
-                # print(f'Kickers: {kicker_dict[0]} | {kicker_dict[1]} | {kicker_dict[2]} | {kicker_dict[3]}')
 
                 for key in kicker_dict:
                     kicker_collection = kicker_dict[key]
                     ordered_kicker_collection = []
                     for kicker in kicker_collection:
                         ordered_kicker_collection.append(card_order[kicker])
-                    print(ordered_kicker_collection)
+
                     kicker_mask = [index for index, value in enumerate(ordered_kicker_collection) if value > min(ordered_kicker_collection)]
-                    print(f"Mask:{kicker_mask}")
+
                     for idx in kicker_mask:
-                        list_of_scores[idx] = []
+                        list_of_scores[idx] = {}
+                    non_empty_count = sum(1 for dictionary in list_of_scores if dictionary)
+                    if non_empty_count == 1:
+                        winners = []
+                        for score in list_of_scores:
+                            if not score == {}:
+                                winners.append(score["cards"])
+                        return winners
 
             winners = []
             for score in list_of_scores:
-                if not score == []:
+                if not score == {}:
                     winners.append(score["cards"])
             return winners
         
