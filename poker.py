@@ -1,5 +1,6 @@
 test_hands = [
-          "4D 5S 6S 8D 3C",
+          "4D 8S 10S JD 3C",
+          "AD 5S 4S 3D 2C",
         ]
 
 def best_hands(hands):
@@ -66,30 +67,37 @@ def best_hands(hands):
         else:
             score["handIndex"] = 5
             score["flush"] = True
+            score["kind"] = get_high_card(cards)[0]
             # no return because need check for straight flush
 
         # Check for straight
         straight_values = [card_order[card[0]] for card in cards]
-        if 14 in straight_values and 2 in straight_values:
-            index_to_change = straight_values.index(2)
-            straight_values[index_to_change] = 15
+        # Ace low for five high straight
+        if (2 in straight_values) and all(item in straight_values for item in [11,12,13,14]):
+            straight_values.remove(2)
+            straight_values.append(15)
+
         if max(straight_values) - min(straight_values) == 4 and len(set(straight_values)) == 5:
             score["handIndex"] = 6
             score["straight"] = True
+            if (15 in straight_values):
+                score["kind"] = '5'
+            else:
+                score["kind"] = get_high_card(cards)[0]
             # no return because need check for straight flush
 
         # Check for straight flush
         if score["flush"] and score["straight"]:
             score["handIndex"] = 2
-            score["kind"] = get_high_card(cards)[0]
+            # score["kind"] = get_high_card(cards)[0]
             return score
         elif score["flush"]:
             score["handIndex"] = 5
-            score["kind"] = get_high_card(cards)[0]
+            # score["kind"] = get_high_card(cards)[0]
             return score
         elif score["straight"]:
             score["handIndex"] = 6
-            score["kind"] = get_high_card(cards)[0]
+            # score["kind"] = get_high_card(cards)[0]
             return score
         
         # Handle not five of kind, straight, flush, and straight flush
@@ -134,7 +142,7 @@ def best_hands(hands):
             high_card = get_high_card(cards)[0]
             score["kind"] = high_card
             not_high_card = [v for v in values if v != high_card]
-            score["kickers"] = sorted(not_high_card, key=lambda x: card_order[x[0]])
+            score["kickers"] = not_high_card
             score["handIndex"] = 10
             return score
 
