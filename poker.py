@@ -1,4 +1,4 @@
-test_hands = ["4S 2H 6S 2D JH", "2S 4H 6C 4D JD"]
+test_hands = ["4H 4S AH JC 3D", "4C 4D AS 5D 6C"]
 
 def best_hands(hands):
 
@@ -111,7 +111,7 @@ def best_hands(hands):
                 
             # Check for four of a kind
             if values.count(highest_count) == 4:
-                not_quads = [v for v in values if v != value]
+                not_quads = [v for v in values if v != highest_count]
                 score["handIndex"] = 3
                 score["kind"] = highest_count
                 score["kickers"] = not_quads
@@ -119,7 +119,7 @@ def best_hands(hands):
             # Check for three of a kind
             if values.count(highest_count) == 3:
                 
-                not_trips = [v for v in values if v != value]
+                not_trips = [v for v in values if v != highest_count]
                 score["kind"] = highest_count
                 # Check for full house
                 if not_trips[0] == not_trips[1]:
@@ -131,20 +131,22 @@ def best_hands(hands):
             # Check for pairs
             if values.count(highest_count) == 2:
                 print(f"HC = {highest_count}")
-                print(f"Value? {value}")
                 score["kind"] = highest_count
                 # Check for two pair
-                not_first_pair = [v for v in values if v != value]
+                not_first_pair = [v for v in values if v != highest_count]
                 if (len(set(values)) == 3):
                     for v2 in not_first_pair:
                         if not_first_pair.count(v2) == 2:
                             score["handIndex"] = 8
-                            score["kickers"] = sorted(not_first_pair, key=lambda x: card_order[x[0]])
+                            # score["kickers"] = sorted(not_first_pair, key=lambda x: card_order[x[0]])
+                            score["kickers"] = not_first_pair
                             return score
                 # Handle one pair
                 else:
                     score["handIndex"] = 9
-                    score["kickers"] = sorted(not_first_pair, key=lambda x: card_order[x[0]])
+                    # score["kickers"] = sorted(not_first_pair, key=lambda x: card_order[x[0]])
+                    print(f'NFP = {not_first_pair}')
+                    score["kickers"] = not_first_pair
                     return score
             # Else high card
             high_card = get_high_card(cards)[0]
