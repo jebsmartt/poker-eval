@@ -1,4 +1,4 @@
-test_hands = ["3H 6H 7H 8H 5H", "4S 5H 4C 5D 4H"]
+test_hands = ["4S 2H 6S 2D JH", "2S 4H 6C 4D JD"]
 
 def best_hands(hands):
 
@@ -101,26 +101,26 @@ def best_hands(hands):
         if score["handIndex"] not in [1, 2, 5, 6]:
             # Make list of just the values, not the suits
             values = [card[0] for card in cards]
-            print(values)
             value_instances = {}
             for value in values:
                 value_instances[value] = values.count(value)
 
             highest_count = max(value_instances, key=value_instances.get)
-            print(highest_count)
+            print(values)
+            print(f"Count of HC = {values.count(highest_count)}")
                 
             # Check for four of a kind
             if values.count(highest_count) == 4:
                 not_quads = [v for v in values if v != value]
                 score["handIndex"] = 3
-                score["kind"] = value
+                score["kind"] = highest_count
                 score["kickers"] = not_quads
                 return score
             # Check for three of a kind
             if values.count(highest_count) == 3:
                 
                 not_trips = [v for v in values if v != value]
-                score["kind"] = value
+                score["kind"] = highest_count
                 # Check for full house
                 if not_trips[0] == not_trips[1]:
                     score["handIndex"] = 4
@@ -130,7 +130,9 @@ def best_hands(hands):
                 return score
             # Check for pairs
             if values.count(highest_count) == 2:
-                score["kind"] = value
+                print(f"HC = {highest_count}")
+                print(f"Value? {value}")
+                score["kind"] = highest_count
                 # Check for two pair
                 not_first_pair = [v for v in values if v != value]
                 if (len(set(values)) == 3):
