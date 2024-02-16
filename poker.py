@@ -1,4 +1,4 @@
-test_hands = ["2S 5H 6S 8D 7H", "3S 4D 6D 8C 7S"]
+test_hands = ["3H 6H 7H 8H 5H", "4S 5H 4C 5D 4H"]
 
 def best_hands(hands):
 
@@ -99,42 +99,51 @@ def best_hands(hands):
         
         # Handle not five of kind, straight, flush, and straight flush
         if score["handIndex"] not in [1, 2, 5, 6]:
+            # Make list of just the values, not the suits
             values = [card[0] for card in cards]
+            print(values)
+            value_instances = {}
             for value in values:
-                # Check for four of a kind
-                if values.count(value) == 4:
-                    not_quads = [v for v in values if v != value]
-                    score["handIndex"] = 3
-                    score["kind"] = value
-                    score["kickers"] = not_quads
+                value_instances[value] = values.count(value)
+
+            highest_count = max(value_instances, key=value_instances.get)
+            print(highest_count)
+                
+            # Check for four of a kind
+            if values.count(highest_count) == 4:
+                not_quads = [v for v in values if v != value]
+                score["handIndex"] = 3
+                score["kind"] = value
+                score["kickers"] = not_quads
+                return score
+            # Check for three of a kind
+            if values.count(highest_count) == 3:
+                
+                not_trips = [v for v in values if v != value]
+                score["kind"] = value
+                # Check for full house
+                if not_trips[0] == not_trips[1]:
+                    score["handIndex"] = 4
+                else:
+                    score["handIndex"] = 7
+                score["kickers"] = sorted(not_trips, key=lambda x: card_order[x[0]])
+                return score
+            # Check for pairs
+            if values.count(highest_count) == 2:
+                score["kind"] = value
+                # Check for two pair
+                not_first_pair = [v for v in values if v != value]
+                if (len(set(values)) == 3):
+                    for v2 in not_first_pair:
+                        if not_first_pair.count(v2) == 2:
+                            score["handIndex"] = 8
+                            score["kickers"] = sorted(not_first_pair, key=lambda x: card_order[x[0]])
+                            return score
+                # Handle one pair
+                else:
+                    score["handIndex"] = 9
+                    score["kickers"] = sorted(not_first_pair, key=lambda x: card_order[x[0]])
                     return score
-                # Check for three of a kind
-                if values.count(value) == 3:
-                    not_trips = [v for v in values if v != value]
-                    score["kind"] = value
-                    # Check for full house
-                    if not_trips[0] == not_trips[1]:
-                        score["handIndex"] = 4
-                    else:
-                        score["handIndex"] = 7
-                    score["kickers"] = sorted(not_trips, key=lambda x: card_order[x[0]])
-                    return score
-                # Check for pairs
-                if values.count(value) == 2:
-                    score["kind"] = value
-                    # Check for two pair
-                    not_first_pair = [v for v in values if v != value]
-                    if (len(set(values)) == 3):
-                        for v2 in not_first_pair:
-                            if not_first_pair.count(v2) == 2:
-                                score["handIndex"] = 8
-                                score["kickers"] = sorted(not_first_pair, key=lambda x: card_order[x[0]])
-                                return score
-                    # Handle one pair
-                    else:
-                        score["handIndex"] = 9
-                        score["kickers"] = sorted(not_first_pair, key=lambda x: card_order[x[0]])
-                        return score
             # Else high card
             high_card = get_high_card(cards)[0]
             score["kind"] = high_card
